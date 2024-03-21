@@ -1,12 +1,4 @@
-import { createContext, useContext, useState } from "react";
-import { auth } from "../firebaseinit";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
-
-import { setDoc, doc } from "firebase/firestore";
-import db from "../firebaseinit";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const authContext = createContext();
 
@@ -21,30 +13,33 @@ function getError(error) {
 function Authentication({ children }) {
   const [SignedIn, setSignedIn] = useState(false);
 
-  // this function is called inside signup function, whenever a new user sign ups, this function will create a new doc with new users ID as doc ID
-  // and setting orders and cart to empty.
-  const makeNewAccount = async (userCredential, name) => {
-    await setDoc(doc(db, userCredential.user.uid, "Orders"), {
-      name: name,
-      myorders: [],
-    });
-    await setDoc(doc(db, userCredential.user.uid, "Cart"), {
-      mycart: [],
-    });
-  };
-
   // function to signout the current signed in user
   const signOut = async () => {
-    auth.signOut();
+    try {
+      const response = await fetch("http://localhost:4100/api/user/signout", {
+        method: "Post",
+      });
+      const res = await response.json();
+      localStorage.removeItem("uid");
+      setSignedIn(false);
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   // function to handle signUp of new user using firebase authentication
   const signUp = async (N, E, P) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, E, P);
-      console.log(userCredential);
+      const response = await fetch("http://localhost:4100/api/user/signup", {
+        method: "Post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: E, password: P, name: N }),
+      });
+      const res = await response.json();
+      localStorage.setItem("uid", res.data.id);
       setSignedIn(true);
-      makeNewAccount(userCredential, N);
       return "success";
     } catch (error) {
       const newErr = getError(error);
@@ -55,14 +50,30 @@ function Authentication({ children }) {
   // function to handle SignIn, if user credentials are correct -> it will be signed it , else not.
   const signIn = async (e, p) => {
     try {
-      await signInWithEmailAndPassword(auth, e, p);
-      setSignedIn(true);
+      const response = await fetch("http://localhost:4100/api/user/signin", {
+        method: "Post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: p, email: e }),
+      });
+      const res = await response.json();
+      console.log(res);
+      localStorage.setItem("uid", res.data.id);
+      setSignedIn(res.data.id);
       return "success";
     } catch (error) {
       const newErr = getError(error);
       return newErr;
     }
   };
+
+  useEffect(() => {
+    const uid = localStorage.getItem("uid") || null;
+    if (uid) {
+      setSignedIn(uid);
+    }
+  }, []);
 
   return (
     <authContext.Provider
