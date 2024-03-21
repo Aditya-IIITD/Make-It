@@ -1,0 +1,10 @@
+cart
+= addtocart
+= increasequantity
+= decreasequantity
+= removefromcart
+= fetchcart
+
+order
+= placeorder
+= fetchorder

@@ -32,6 +32,50 @@ class UserController {
       res.status(500).send(err.message);
     }
   }
+
+  async getUserData(req, res) {
+    try {
+      const response = await this.repository.getUserData(req.body.id);
+      res.status(200).send(response);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  async placeOrder(req, res) {
+    try {
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  async addToCart(req, res) {
+    try {
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  async removeFromCart(req, res) {
+    try {
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  async increaseQty(req, res) {
+    try {
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+
+  async decreaseQty(req, res) {
+    try {
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
 }
 
 export default UserController;

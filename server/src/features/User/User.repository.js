@@ -1,5 +1,5 @@
 import db, { auth } from "../../../firebaseinit.js";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, getDoc, collection } from "firebase/firestore";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -17,14 +17,12 @@ export default class UserRepository {
         email,
         password
       );
-      await setDoc(doc(db, userCredential.user.uid, "Orders"), {
-        name: name,
-        myorders: [],
+      await setDoc(doc(db, this.collection, userCredential.user.uid), {
+        cart: [],
+        orders: [],
       });
-      await setDoc(doc(db, userCredential.user.uid, "Cart"), {
-        mycart: [],
-      });
-      return { status: true, data: userCredential };
+
+      return { status: true, data: { userid: userCredential.user.uid } };
     } catch (err) {
       return { status: false, err: err.message };
     }
@@ -32,8 +30,11 @@ export default class UserRepository {
 
   async signin(email, password) {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      return { status: true, msg: "logged in" };
+      const response = await signInWithEmailAndPassword(auth, email, password);
+      return {
+        status: true,
+        data: { msg: "logged in", userid: response.user.uid },
+      };
     } catch (err) {
       return { status: false, err: err.message };
     }
@@ -47,4 +48,19 @@ export default class UserRepository {
       return { status: false, err: err.message };
     }
   }
+
+  async getUserData(id) {
+    try {
+      const res = await getDoc(doc(db, this.collection, id));
+      return { status: true, data: res.data() };
+    } catch (err) {
+      return { status: false, err: err.message };
+    }
+  }
+
+  async placeOrder(id, order) {}
+  async addToCart(id, item) {}
+  async removeFromCart(id, item) {}
+  async increaseQty(id, item) {}
+  async decreaseQty(id, item) {}
 }
