@@ -15,6 +15,8 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import { auth } from "../firebaseinit";
+import { useValue } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const orderContext = createContext();
 
@@ -50,19 +52,13 @@ function OrderContext({ children }) {
   const [Products, setProducts] = useState({});
   const [TotalPrice, setTotalPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const { SignedIn } = useValue();
   const currentUser = auth.currentUser; //current Signed In user, if no one then it will be Null
 
   // function to update orders in database as new order is added
   const addOrderToDatabase = async (newOrder) => {
     await updateDoc(doc(db, currentUser.uid, "Orders"), {
       myorders: arrayUnion(newOrder),
-    });
-  };
-
-  //maintaining current user's cart in database
-  const updateDatabaseCart = async (arr) => {
-    await updateDoc(doc(db, currentUser.uid, "Cart"), {
-      mycart: arr,
     });
   };
 
@@ -76,22 +72,38 @@ function OrderContext({ children }) {
     };
 
     addOrderToDatabase(newOrder);
-    updateDatabaseCart([]);
     setOrders({ type: "ADD_ORDER", payload: { order: newOrder } });
     setCart({ type: "EMPTY", payload: {} });
     console.log(orders);
   };
 
   //If item is not present in cart -> Add it to cart, else increase its quantity (qty)
-  const addToCart = (id) => {
-    const item = Products.find((item) => item.id === id);
-    if (cart.find((p) => p.id === id)) {
-      incQty(id);
+  const addToCart = async (data) => {
+    if (cart.find((p) => p.id === data.id)) {
+      await incQty(data.id);
       return "updated";
     } else {
+      const item = Products[data.type].find((item) => item.id === data.id);
       setCart({ type: "ADD_ITEM", payload: { ...item, qty: 1 } });
-      updateDatabaseCart([...cart, { ...item, qty: 1 }]);
-      return "added";
+      try {
+        await fetch("http://localhost:4100/api/user/addToCart", {
+          method: "Post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...data,
+            name: item.name,
+            image: item.image,
+            price: item.price,
+            qty: 1,
+            uid: SignedIn,
+          }),
+        });
+        return "added";
+      } catch (err) {
+        console.log("Error while adding to cart: ", err.message);
+      }
     }
   };
 
@@ -104,11 +116,10 @@ function OrderContext({ children }) {
       return true;
     });
     setCart({ type: "UPDATE_ALL", payload: { arr: arr } });
-    updateDatabaseCart(arr);
   };
 
   //increase product qty in cart
-  const incQty = (id) => {
+  const incQty = async (id) => {
     const arr = cart.map((p) => {
       if (p.id === id) {
         p.qty += 1;
@@ -117,7 +128,21 @@ function OrderContext({ children }) {
     });
 
     setCart({ type: "UPDATE_ALL", payload: { arr: arr } });
-    updateDatabaseCart(arr);
+    try {
+      await fetch("http://localhost:4100/api/user/increaseQty", {
+        method: "Post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          uid: SignedIn,
+        }),
+      });
+      return "qty increased";
+    } catch (err) {
+      console.log("Error while increasing item qty in cart: ", err.message);
+    }
   };
 
   //decrease product qty in cart
@@ -131,7 +156,6 @@ function OrderContext({ children }) {
     });
 
     setCart({ type: "UPDATE_ALL", payload: { arr: arr } });
-    updateDatabaseCart(arr);
   };
 
   //Maintaining total product based on cart

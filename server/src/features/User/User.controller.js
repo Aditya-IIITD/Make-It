@@ -51,6 +51,8 @@ class UserController {
 
   async addToCart(req, res) {
     try {
+      const response = await this.repository.addToCart(req.body);
+      res.status(200).send(response);
     } catch (err) {
       res.status(500).send(err.message);
     }
@@ -65,6 +67,9 @@ class UserController {
 
   async increaseQty(req, res) {
     try {
+      const response = await this.repository.increaseQty(req.body);
+      console.log(response, req.body);
+      res.status(200).send(response);
     } catch (err) {
       res.status(500).send(err.message);
     }
@@ -72,6 +77,9 @@ class UserController {
 
   async decreaseQty(req, res) {
     try {
+      const response = await this.repository.decreaseQty(req.body);
+      console.log(response, req.body);
+      res.status(200).send(response);
     } catch (err) {
       res.status(500).send(err.message);
     }

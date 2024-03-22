@@ -58,9 +58,9 @@ function Authentication({ children }) {
         body: JSON.stringify({ password: p, email: e }),
       });
       const res = await response.json();
-      console.log(res);
-      localStorage.setItem("uid", res.data.id);
-      setSignedIn(res.data.id);
+      // console.log(res);
+      localStorage.setItem("uid", res.data.userid);
+      setSignedIn(res.data.userid);
       return "success";
     } catch (error) {
       const newErr = getError(error);
@@ -69,7 +69,7 @@ function Authentication({ children }) {
   };
 
   useEffect(() => {
-    const uid = localStorage.getItem("uid") || null;
+    const uid = localStorage.getItem("uid");
     if (uid) {
       setSignedIn(uid);
     }

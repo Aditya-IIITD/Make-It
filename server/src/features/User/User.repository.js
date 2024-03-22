@@ -1,5 +1,12 @@
 import db, { auth } from "../../../firebaseinit.js";
-import { setDoc, doc, getDoc, collection } from "firebase/firestore";
+import {
+  setDoc,
+  doc,
+  getDoc,
+  collection,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -57,10 +64,69 @@ export default class UserRepository {
       return { status: false, err: err.message };
     }
   }
+  async addToCart(data) {
+    try {
+      await updateDoc(doc(db, this.collection, data.uid), {
+        cart: arrayUnion(data),
+      });
+      return { status: true, msg: "data added" };
+    } catch (err) {
+      return { status: false, err: err.message };
+    }
+  }
 
-  async placeOrder(id, order) {}
-  async addToCart(id, item) {}
-  async removeFromCart(id, item) {}
-  async increaseQty(id, item) {}
-  async decreaseQty(id, item) {}
+  async increaseQty(data) {
+    try {
+      const res = await getDoc(doc(db, this.collection, data.uid));
+      const response = res.data();
+      const arr = response.cart.map((item) => {
+        if (item.id == data.id) {
+          item.qty += 1;
+        }
+        return item;
+      });
+
+      await updateDoc(doc(db, this.collection, data.uid), {
+        cart: arr,
+      });
+      return { status: true, msg: "item increased" };
+    } catch (err) {
+      return { status: false, err: err.message };
+    }
+  }
+
+  async decreaseQty(data) {
+    try {
+      const res = await getDoc(doc(db, this.collection, data.uid));
+      const response = res.data();
+      const arr = response.cart.filter((item) => {
+        if (item.id == data.id) {
+          item.qty -= 1;
+        }
+        if (item.qty > 0) return true;
+        else return false;
+      });
+
+      await updateDoc(doc(db, this.collection, data.uid), {
+        cart: arr,
+      });
+      return { status: true, msg: "item increased" };
+    } catch (err) {
+      return { status: false, err: err.message };
+    }
+  }
+
+  async placeOrder(data) {
+    try {
+    } catch (err) {
+      return { status: false, err: err.message };
+    }
+  }
+
+  async removeFromCart(data) {
+    try {
+    } catch (err) {
+      return { status: false, err: err.message };
+    }
+  }
 }

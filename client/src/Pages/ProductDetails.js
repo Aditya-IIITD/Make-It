@@ -2,11 +2,36 @@ import { useParams } from "react-router-dom";
 import { useOrderValue } from "../Contexts/OrderContext";
 import { Circles } from "react-loader-spinner";
 import style from "../Styles/Home.module.css";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useValue } from "../Contexts/AuthContext";
 function ProductDetails() {
-  const { Products } = useOrderValue();
+  const { Products, addToCart } = useOrderValue();
   const { item, id } = useParams();
+  const { SignedIn } = useValue();
+  const navigate = useNavigate();
   const product = Products[item]?.find((i) => i.id === id);
+  const handleSubmit = async (e, id) => {
+    e.preventDefault();
+    if (!SignedIn) {
+      navigate("/signin");
+    } else {
+      const check1 = e.target.input1.checked;
+      const check2 = e.target.input2.checked;
+      let data = { id: id, type: item };
+      if (check1) {
+        data = { ...data, salad: true };
+      }
+      if (check2) {
+        data = { ...data, cutlery: true };
+      }
 
+      await addToCart(data);
+      toast.success("Item added to cart");
+      e.target.input1.checked = false;
+      e.target.input2.checked = false;
+    }
+  };
   if (product) {
     return (
       <div className="poppins">
@@ -79,12 +104,15 @@ function ProductDetails() {
           </div>
 
           {/* checkouts */}
+        </section>
+        <form onSubmit={(e) => handleSubmit(e, product.id)}>
           <div className="w-4/12 mx-auto px-10 py-2 rounded-xl bg-gray-200 ">
             <div class="flex items-center mb-4">
               <input
                 id="default-checkbox"
                 type="checkbox"
-                value=""
+                name="input1"
+                value="Salad"
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500  focus:ring-2 "
               />
               <label for="default-checkbox" class="ms-2 text-sm font-medium ">
@@ -96,7 +124,8 @@ function ProductDetails() {
               <input
                 id="checked-checkbox"
                 type="checkbox"
-                value=""
+                name="input2"
+                value="Cutlery"
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 "
               />
               <label for="checked-checkbox" class="ms-2 text-sm font-medium  ">
@@ -104,12 +133,15 @@ function ProductDetails() {
               </label>
             </div>
           </div>
-        </section>
-        <div className="flex justify-center my-10 ">
-          <button className="bg-custom-color text-white px-6 py-3 rounded-xl shadow-xl font-semibold hover:scale-[1.05] border hover:border-purple-900 ease-in duration-200">
-            Add to Cart
-          </button>
-        </div>
+          <div className="flex justify-center my-10 ">
+            <button
+              type="submit"
+              className="bg-custom-color text-white px-6 py-3 rounded-xl shadow-xl font-semibold hover:scale-[1.05] border hover:border-purple-900 ease-in duration-200"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </form>
       </div>
     );
   } else {
