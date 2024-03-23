@@ -116,14 +116,25 @@ export default class UserRepository {
     }
   }
 
-  async placeOrder(data) {
+  async removeFromCart(data) {
     try {
+      const res = await getDoc(doc(db, this.collection, data.uid));
+      const response = res.data();
+      const arr = response.cart.filter((item) => {
+        if (item.id == data.id) {
+          return false;
+        } else return true;
+      });
+      await updateDoc(doc(db, this.collection, data.uid), {
+        cart: arr,
+      });
+      return { status: true, msg: "item removed" };
     } catch (err) {
       return { status: false, err: err.message };
     }
   }
 
-  async removeFromCart(data) {
+  async placeOrder(data) {
     try {
     } catch (err) {
       return { status: false, err: err.message };

@@ -2,7 +2,6 @@
   min-height: 100px;
   width: 50%;
   /* border: 0.5px solid black; */
-  margin: 0 auto;
   text-align: center;
 }
 
@@ -21,7 +20,7 @@
 
 .table {
   width: 100%;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
   transition: 0.09s ease-in-out;
 }
 
@@ -53,7 +52,8 @@
 
 .lastRow > td {
   padding-right: 25px;
-  font-weight: 600;
+  /* font-weight: 600; */
+  height: 100px;
 }
 
 .emptyOrder {

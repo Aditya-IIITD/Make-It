@@ -24,12 +24,16 @@ function Orders() {
   }
   //ordertables are mapped based on orders
   return (
-    <div className={style.ordersContainer}>
-      <h1>Your Orders</h1>
-      {orders.map((order, index) => (
-        <OrderTable order={order} key={index} />
-      ))}
-    </div>
+    <>
+      <h1 className="text-left w-9/12 pb-2 mx-auto text-black-500 text-4xl font-medium  my-10 poppins border-b border-dotted border-b-gray-500">
+        My Orders
+      </h1>
+      <div className={`${style.ordersContainer}  mx-auto mb-56`}>
+        {orders.map((order, index) => (
+          <OrderTable order={order} key={index} />
+        ))}
+      </div>
+    </>
   );
 }
 

@@ -24,7 +24,7 @@ function Navbar() {
             src="https://cdn-icons-png.flaticon.com/128/3170/3170733.png"
             className="h-[40px]"
           />
-          <span> Make-It</span>
+          <span className="poppins"> Make-It</span>
         </Link>
         <div className={style.RightContainer}>
           <div
@@ -35,34 +35,46 @@ function Navbar() {
               }
             }}
           >
-            <Link to={!SignedIn ? "Signin" : "/"}>
+            <Link to={!SignedIn ? "Signin" : "/"} className="poppins text-sm">
               {SignedIn ? " Sign Out" : "Sign In"}
             </Link>
           </div>
           {SignedIn ? (
             <>
               <div className={style.NavIcon}>
-                <Link to={"Cart"}>Cart</Link>
+                <Link to={"Cart"} className="poppins text-sm">
+                  Cart
+                </Link>
               </div>
               <div className={style.NavIcon}>
-                <Link to={"Orders"}>My Orders</Link>
+                <Link to={"Orders"} className="poppins text-sm">
+                  My Orders
+                </Link>
               </div>
             </>
           ) : null}
           <div className={style.NavIcon}>
-            <Link to="Dinner">Dinner</Link>
+            <Link to="Dinner" className="poppins text-sm">
+              Dinner
+            </Link>
           </div>
           <div className={style.NavIcon}>
-            <Link to="Snacks">Snacks</Link>
+            <Link to="Snacks" className="poppins text-sm">
+              Snacks
+            </Link>
           </div>
           <div className={style.NavIcon}>
-            <Link to="Lunch">Lunch</Link>
+            <Link to="Lunch" className="poppins text-sm">
+              Lunch
+            </Link>
           </div>
           <div className={style.NavIcon}>
-            <Link to="Breakfast">Breakfast</Link>
+            <Link to="Breakfast" className="poppins text-sm">
+              Breakfast
+            </Link>
           </div>
           <div className={style.NavIcon}>
-            <Link>Home</Link>
+            <Link className="poppins text-sm">Home</Link>
           </div>
         </div>
       </div>

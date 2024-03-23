@@ -108,14 +108,30 @@ function OrderContext({ children }) {
   };
 
   //remove item from cart
-  const removeFromCart = (id) => {
+  const removeFromCart = async (id) => {
     const arr = cart.filter((p) => {
       if (p.id === id) {
         return false;
       }
       return true;
     });
+    console.log(id);
     setCart({ type: "UPDATE_ALL", payload: { arr: arr } });
+    try {
+      await fetch("http://localhost:4100/api/user/removeFromCart", {
+        method: "Post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          uid: SignedIn,
+        }),
+      });
+      return "item removed";
+    } catch (err) {
+      console.log("Error while removing item from cart: ", err.message);
+    }
   };
 
   //increase product qty in cart
@@ -146,7 +162,7 @@ function OrderContext({ children }) {
   };
 
   //decrease product qty in cart
-  const decQty = (id) => {
+  const decQty = async (id) => {
     const arr = cart.filter((p) => {
       if (p.id === id) {
         p.qty -= 1;
@@ -156,13 +172,28 @@ function OrderContext({ children }) {
     });
 
     setCart({ type: "UPDATE_ALL", payload: { arr: arr } });
+    try {
+      await fetch("http://localhost:4100/api/user/decreaseQty", {
+        method: "Post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+          uid: SignedIn,
+        }),
+      });
+      return "qty decreased";
+    } catch (err) {
+      console.log("Error while decreasing item qty in cart: ", err.message);
+    }
   };
 
   //Maintaining total product based on cart
   useEffect(() => {
     let tot = 0;
     for (let p of cart) {
-      tot += p.Price * p.qty;
+      tot += p.price * p.qty;
     }
     setTotalPrice(tot);
   }, [cart]);

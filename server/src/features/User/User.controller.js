@@ -60,6 +60,8 @@ class UserController {
 
   async removeFromCart(req, res) {
     try {
+      const response = await this.repository.removeFromCart(req.body);
+      res.status(200).send(response);
     } catch (err) {
       res.status(500).send(err.message);
     }

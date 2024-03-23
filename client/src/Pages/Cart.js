@@ -8,6 +8,7 @@ function Cart() {
   // cart contains all cartitems with their quantity, description, price...
   const { cart } = useOrderValue();
 
+  console.log(cart);
   // if cart is empty this will be returned
   if (cart.length === 0) {
     return (
@@ -28,12 +29,19 @@ function Cart() {
   return (
     <>
       <div className={style.homePage}>
-        <TotalPrice />
-        <div className={style.cardsContainer}>
+        <h1 className="pb-2 mx-auto text-black-500 text-4xl font-medium w-9/12 mt-10 poppins border-b border-dotted border-b-gray-500">
+          My Cart
+        </h1>
+        <div
+          className={
+            " w-9/12 mx-auto py-16  flex flex-wrap gap-12 justify-evenly"
+          }
+        >
           {cart.map((product, index) => (
             <CartCard key={index} product={product} />
           ))}
         </div>
+        <TotalPrice />
       </div>
     </>
   );

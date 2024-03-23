@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useValue } from "../Contexts/AuthContext";
 import style from "../Styles/Card.module.css";
 import { useOrderValue } from "../Contexts/OrderContext";
@@ -104,12 +104,12 @@ function Card({ product, search, item }) {
           <span class="text-3xl font-bold text-gray-900 dark:text-white">
             Rs. {product.price}
           </span>
-          <a
-            href={`/${item}/details/${product.id}`}
+          <Link
+            to={`/${item}/details/${product.id}`}
             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             View Recipe
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -125,14 +125,18 @@ export function CartCard({ product }) {
   const { incQty, decQty, removeFromCart } = useOrderValue();
 
   return (
-    <div className={style.Card}>
+    <div className={`${style.Card} shadow-xl border border-gray-250`}>
       <div className={style.productDetails}>
-        <div className={style.productImage}>
+        <div>
           <img className={style.img} alt="Product" src={product.image} />
         </div>
-        <div className={style.productDescription}>{product.Description}</div>
-        <div className={style.qtyNprice}>
-          <h2>₹ {product.Price}</h2>
+        <div className={`${style.productDescription} my-2 font-semibold`}>
+          {product.name}
+        </div>
+        <div className={`${style.qtyNprice} `}>
+          <h2 className="font-semibold text-[20px] text-gray-500">
+            ₹ {product.price}
+          </h2>
           <div className={style.qtyBtns}>
             <img
               src="https://cdn-icons-png.flaticon.com/128/1828/1828899.png"

@@ -8,15 +8,33 @@ function TotalPrice() {
   const navigate = useNavigate();
   //this funciton invokes when Purchase button is pressed, it places a new order
   const handleOrder = () => {
-    navigate("/Orders");
     addOrder();
+    navigate("/Orders");
   };
+
   return (
-    <div className={style.priceContainer}>
-      <h3>Total Price:- ₹{TotalPrice}/-</h3>
-      <button className={style.btn} onClick={handleOrder}>
-        Purchase
-      </button>
+    <div className="w-4/12 shadow mx-auto p-8 bg-gray-200 rounded-lg my-10">
+      <h1 className=" w-10/12 mx-auto poppins text-xl font-semibold mb-4">
+        Order:
+      </h1>
+      <h3 className=" w-8/12 mx-auto flex justify-between font-medium text-md poppins">
+        <p>Total Price:-</p> <p>₹{TotalPrice}/-</p>
+      </h3>
+      <h3 className="border-y border-gray-500 py-2 w-8/12 mx-auto flex justify-between font-medium text-md poppins my-2">
+        <p>Delivery Charges:-</p> <p>free</p>
+      </h3>
+      <h3 className=" w-8/12 mx-auto flex justify-between font-medium text-md poppins mb-4">
+        <p>Platform Fee:-</p> <p>₹{3}/-</p>
+      </h3>
+
+      <h3 className=" w-9/12 mx-auto flex justify-between font-semibold text-md poppins mb-4">
+        <p>Grand Total:-</p> <p>₹{TotalPrice + 3}/-</p>
+      </h3>
+      <div className="w-10/12 mx-auto">
+        <button className={`${style.btn} font-semibold `} onClick={handleOrder}>
+          Place Order
+        </button>
+      </div>
     </div>
   );
 }
